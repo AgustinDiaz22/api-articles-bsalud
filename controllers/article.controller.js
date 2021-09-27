@@ -1,4 +1,5 @@
 'use strict'
+// categoria de producota ´para poder editar 
 const mongoose = require('mongoose');
 
 
@@ -9,7 +10,6 @@ var moment = require('moment');
 moment.locale('es');
 var Article;
 
-
 async function findAllArticles(req, res, next) {
 
     let articles = await sql.getArticle()
@@ -17,14 +17,21 @@ async function findAllArticles(req, res, next) {
 
 }
 
-async function allMovement(req, res, next) {
+async function allreason(req, res, next) {
     initConnectionDB('bsaludArticle')
 
-    Article.find({ "operationType": { "$ne": "D" } }).then(r => {
+    let match
+    if (req.query) {
+        match = req.query.match
+    } else {
+        match = { "operationType": { "$ne": "D" } }
+    }
+    match = JSON.parse(match)
+    Article.find(match,{}, {sort: {creationDate: 1}}).then(r => {
         return res.status(200).send(r);
     })
 }
-async function deleteMovement(req, res, next) {
+async function deletereason(req, res, next) {
     var articleId = req.params.id
     Article.findByIdAndUpdate(articleId,
         {
@@ -34,25 +41,24 @@ async function deleteMovement(req, res, next) {
         },
         (async (err, r) => {
             if (r) {
-                return res.status(200).send({ message: 'Movimiento eliminado', status: 200, res: r })
+                return res.status(200).send({ message: 'Motivo eliminado', status: 200, res: r })
             } else if (err) {
-                return res.status(500).send({ message: 'error al eliminar', status: 500, err: err})
+                return res.status(500).send({ message: 'error al eliminar', status: 500, err: err })
             }
 
         }))
 
 }
-async function saveMovement(req, res, next) {
+async function savereason(req, res, next) {
     initConnectionDB('bsaludArticle')
-
     let params = req.body.body
     let article = new Article();
-    article.idArticle = params.idArticulo
-    article.name = params.arNombre
-    article.description = params.arDescripcion
-    article.movement = params.movement
+    article.idArticulo = params.idArticulo
+    article.arNombre = params.arNombre
+    article.arDescripcion = params.arDescripcion
+    article.reason = params.reason
 
-    article.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    article.creationDate = moment().format('YYYY-MM-DDT12:00')
     article.operationType = 'C';
 
     article.save((err, articleSave) => {
@@ -78,7 +84,7 @@ function initConnectionDB(database) {
 }
 module.exports = {
     findAllArticles,
-    saveMovement,
-    allMovement,
-    deleteMovement
+    savereason,
+    allreason,
+    deletereason
 };

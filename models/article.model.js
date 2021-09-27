@@ -2,14 +2,15 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-
+var moment = require('moment');
+moment.locale('es');
 
 const ArticleSchema = new Schema({
-    idArticle: { type: String },
-    name: { type: String },
-    description: { type: String },
-    movement: {type: String},
-    creationDate: {type: Date},
+    idArticulo: { type: String },
+    arNombre: { type: String },
+    arDescripcion: { type: String },
+    reason: { type: String },
+    creationDate: { type: Date, default: moment().format('YYYY-MM-DDTHH:mm:ssZ')},
     operationType: { type: String, trim: true },
 })
 
