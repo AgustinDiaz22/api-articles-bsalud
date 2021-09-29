@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // SERVER
-var port = process.env.PORT || 300;
+var port = 301;
 var server = app.listen(port, function () {
     console.log(moment().format('YYYY-MM-DDTHH:mm:ssZ') + ' Server Funcionando en puerto ' + port);
 });
